@@ -1,0 +1,30 @@
+:root {
+    background-color: #ddd3c9;
+    color: #321a03;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 20px;
+    color: #000;
+}
+
+header img {
+    width: 320px;
+    height: fit-content;
+    margin: 15px 0;
+    margin-right: 15px;
+}
+
+main p {
+    font-size: 3rem;
+    margin: 15px 20px;
+}
+
+footer p {
+    font-size: 1.5rem;
+    margin-left: 20px;
+}
