@@ -1,0 +1,131 @@
+:root {
+    background-color: #ddd3c9;
+    color: #3d2004;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 20px;
+    color: #000;
+}
+
+header img {
+    width: 320px;
+    height: fit-content;
+    margin: 15px 0;
+    margin-right: 15px;
+}
+
+form {
+    margin: 50px auto 40px;
+    width: 500px;
+}
+
+.field, .appeal_field {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    margin: 15px 0;
+    text-align: center;
+}
+
+input, select {
+    margin-top: 5px;
+    background-color: #ceb8a3;
+    border: 1px solid #3d2004;
+    border-radius: 15px;
+    height: 30px;
+    padding: 5px;
+}
+
+select {
+    height: 40px;
+    font-size: 1.2rem;
+    font-family: 'Times New Roman', Times, serif;
+    color: #3d2004;
+}
+
+textarea.headers  {
+    display: block;
+    margin: 30px auto 50px;
+    background-color: #ceb8a3;
+    border: 1px solid #3d2004;
+    border-radius: 15px;
+    height: 200px;
+    width: 427px;
+    padding: 10px;
+    font-size: 1.2rem;
+    font-family: 'Times New Roman', Times, serif;
+    color: #3d2004;
+}
+
+.appeal_field textarea {
+    margin-top: 10px;
+    background-color: #ceb8a3;
+    border: 1px solid #3d2004;
+    border-radius: 15px;
+    height: 50px;
+    padding: 10px;
+    font-size: 1.2rem;
+    font-family: 'Times New Roman', Times, serif;
+    color: #3d2004;
+}
+
+.field p {
+    margin: 5px 0 5px;
+}
+
+.checkbox {
+    display: flex;
+    justify-content: space-between;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #ceb8a3;
+    border: 1px solid #3d2004;
+    border-radius: 15px;
+    padding: 5px 10px;
+}
+
+.option label {
+    margin-bottom: 6px;
+    font-size: 1.2rem;
+}
+
+#op_mess, #op_email {
+    margin: 5px;
+    width: 25px;
+}
+
+form button {
+    display: block;
+    background-color: #f7b2c1;
+    padding: 10px 20px;
+    border: 1px solid #3d2004;
+    border-radius: 30px;
+    margin: 10px auto;
+    margin-top: 40px;
+    font-size: 1.2rem;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+a {
+    display: block;
+    font-size: 2rem;
+    color: #8e243b;
+    text-align: center;
+    margin: 0 auto 30px;
+}
+
+footer p {
+    font-size: 1.2rem;
+    margin-left: 20px;
+
+}
