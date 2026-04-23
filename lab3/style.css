@@ -1,0 +1,39 @@
+:root {
+    background-color: #ddd3c9;
+    color: #3d2004;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 20px;
+    color: #000;
+}
+
+header img {
+    width: 320px;
+    height: fit-content;
+    margin: 15px 0;
+    margin-right: 15px;
+}
+
+p {
+    display: block;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 15px;
+}
+
+footer p {
+    font-size: 1.2rem;
+    margin-left: 20px;
+    text-align: left;
+}
