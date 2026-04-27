@@ -19,7 +19,9 @@
                     <button id="equal" value="=" type="submit">=</button>
                 </div>
                 <div id="result">
-                    
+                    <?php if (isset($_GET['result'])): ?>
+                        <?php echo htmlspecialchars((string)$_GET['result'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
@@ -48,18 +50,148 @@
             <button id="abs_clear" class="clear">AC</button>
         </div>
         <?php
-            if (isset($_POST['exp_field'])) {
-                $res = 0;
-                $digits = explode('+', $_POST['exp_field']);
-                foreach ($digits as $digit) {
-                    $res += (int) $digit;
-                }
-                echo $res;
+        session_start();
+        if (!isset($_SESSION['history'])) {
+            $_SESSION['history'] = array();
+        }
+
+
+        function isnum($x) {
+            if ($x === '' || $x === null) return false;
+            if ($x[0] === '-') {
+                $x = substr($x, 1);
+                if ($x === '') return false;
             }
+            if ($x[0] === '.' || $x[strlen($x) - 1] === '.') return false;
+            for ($i = 0, $point = 0; $i < strlen($x); $i++) {
+                $ch = $x[$i];
+                if ($ch === '.') {
+                    $point++;
+                    if ($point > 1) return false;
+                    continue;
+                }
+                if ($ch < '0' || $ch > '9') return false;
+            }
+            if (strlen($x) >= 2 && $x[0] === '0' && $x[1] !== '.') return false;
+            return true;
+        }
+        function calculate($val) {
+            if ($val === '' || $val === null) return 'Выражение не задано!';
+            if (isnum($val)) return $val;
+            $args = explode('+', $val);
+            if (count($args) > 1) {
+                $sum = 0;
+                for ($i = 0; $i < count($args); $i++) {
+                    $arg = calculate($args[$i]);
+                    if (!isnum($arg)) return $arg;
+                    $sum += (float)$arg;
+                }
+                return (string)$sum;
+            }
+            if ($val[0] === '-') $val = '0' . $val;
+            $args = explode('-', $val);
+            if (count($args) > 1) {
+                $first = calculate($args[0]);
+                if (!isnum($first)) return $first;
+                $res = (float)$first;
+                for ($i = 1; $i < count($args); $i++) {
+                    $arg = calculate($args[$i]);
+                    if (!isnum($arg)) return $arg;
+                    $res -= (float)$arg;
+                }
+                return (string)$res;
+            }
+            $args = explode('*', $val);
+            if (count($args) > 1) {
+                $sup = 1;
+                for ($i = 0; $i < count($args); $i++) {
+                    $arg = calculate($args[$i]);
+                    if (!isnum($arg)) return $arg;
+                    $sup *= (float)$arg;
+                }
+                return (string)$sup;
+            }
+            $val = str_replace(':', '/', $val);
+            $args = explode('/', $val);
+            if (count($args) > 1) {
+                $first = calculate($args[0]);
+                if (!isnum($first)) return $first;
+                $res = (float)$first;
+                for ($i = 1; $i < count($args); $i++) {
+                    $arg = calculate($args[$i]);
+                    if (!isnum($arg)) return $arg;
+                    if ((float)$arg == 0.0) return 'Деление на ноль!';
+                    $res /= (float)$arg;
+                }
+                return (string)$res;
+            }
+            return 'Недопустимые символы в выражении!';
+        }
+        function SqValidator($val) {
+            $open = 0;
+            for ($i = 0; $i < strlen($val); $i++) {
+                if ($val[$i] === '(') $open++;
+                else if ($val[$i] === ')') {
+                    $open--;
+                    if ($open < 0) return false;
+                }
+            }
+            return $open === 0;
+        }
+
+        function calculateSq($val) {
+            if (!SqValidator($val)) return 'Неправильная расстановка скобок!';
+            $start = strpos($val, '(');
+            if ($start === false) return calculate($val);
+            $end = $start + 1;
+            $open = 1;
+            while ($open && $end < strlen($val)) {
+                if ($val[$end] === '(') $open++;
+                if ($val[$end] === ')') $open--;
+                $end++;
+            }
+            $inside = substr($val, $start + 1, $end - $start - 2);
+            $inside_res = calculateSq($inside);
+            if (!isnum($inside_res)) return $inside_res;
+            $new_val = substr($val, 0, $start) . $inside_res . substr($val, $end);
+            return calculateSq($new_val);
+        }
+        function formatResult($res) {
+            if (!isnum($res)) return (string)$res;
+            $v = (float)$res;
+            $text = rtrim(rtrim(number_format($v, 10, '.', ''), '0'), '.');
+            return $text === '' ? '0' : $text;
+        }
+        if (isset($_POST['exp_field'])) {
+            $expr = trim((string)$_POST['exp_field']);
+            $bad = '';
+            for ($i = 0; $i < strlen($expr); $i++) {
+                $ch = $expr[$i];
+                $ok = ($ch >= '0' && $ch <= '9') || $ch === '.' || $ch === '+' || $ch === '-' || $ch === '*' || $ch === '/' || $ch === ':' || $ch === '(' || $ch === ')' || $ch === ' ';
+                if (!$ok) { $bad = $ch; break; }
+            }
+            if ($expr === '') {
+                $out = 'Выражение не задано!';
+            } else if ($bad !== '') {
+                $out = 'Недопустимый символ: ' . $bad;
+            } else {
+                $expr_nospace = str_replace(' ', '', $expr);
+                $res = calculateSq($expr_nospace);
+                $out = formatResult($res);
+            }
+            $_SESSION['history'][] = $expr . ' = ' . $out;
+            header('Location: index.php?result=' . urlencode($out));
+            exit;
+        }
         ?>
     </main>
     <footer>
         <p>Задание для самостоятельной работы: «Calculator»</p>
+        <div class="history">
+            <?php foreach ($_SESSION['history'] as $line): ?>
+                <div><?php echo htmlspecialchars((string)$line, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></div>
+            <?php endforeach; ?>
+        </div>
     </footer>
     <script src="main.js"></script>
 </body>
