@@ -1,9 +1,15 @@
 <?php
     function getFriendsList ($type, $page) {
-        $notebook_bd = mysqli_connect('localhost', 'root', '', 'notebook');
+        $notebook_bd = mysqli_connect(
+            'sql110.infinityfree.com',  
+            'if0_41702370',              
+            'qaxbNpLnCeBT',              
+            'if0_41702370_notebook' 
+        );
         if (mysqli_connect_errno()) {
             echo 'Ошибка: ' . mysqli_connect_error();
         }
+    	mysqli_set_charset($notebook_bd, 'utf8');
         $order = 'id';
         if ($type == 'fam') {
             $order = 'surname';
@@ -27,9 +33,10 @@
                     <th>Email</th>
                     <th>Комментарий</th>
                 </tr>';
+        $counter = $start + 1;
         while ($row = mysqli_fetch_assoc($result)) {
             $ret .= "<tr>
-            <td>{$row['id']}</td>
+            <td>{$counter}</td>
             <td>{$row['surname']}</td>
             <td>{$row['name']}</td>
             <td>{$row['lastname']}</td>
@@ -40,6 +47,7 @@
             <td>{$row['email']}</td>
             <td>{$row['comment']}</td>
             </tr>";
+            $counter++;
         }
         $ret .= '</table>';
         $ret .= '<div class="pagination">';

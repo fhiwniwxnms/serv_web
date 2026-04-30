@@ -1,8 +1,14 @@
 <?php
-$notebook_bd = mysqli_connect('localhost', 'root', '', 'notebook');
+$notebook_bd = mysqli_connect(
+    'sql110.infinityfree.com',  
+    'if0_41702370',              
+    'qaxbNpLnCeBT',              
+    'if0_41702370_notebook' 
+);
 if (mysqli_connect_errno()) {
     echo 'Ошибка: ' . mysqli_connect_error();
 }
+mysqli_set_charset($notebook_bd, 'utf8');
 if (isset($_POST['button'])) {
     $sql = 'INSERT INTO contacts (surname, name, lastname, gender,
     date, phone, location, email, comment) VALUES 

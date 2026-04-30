@@ -2,10 +2,16 @@
     <p>Здесь вы можете отредактировать любую запись из таблицы</p>
     <div class="a-grid">
         <?php
-            $notebook_bd = mysqli_connect('localhost', 'root', '', 'notebook');
+            $notebook_bd = mysqli_connect(
+                'sql110.infinityfree.com',  
+                'if0_41702370',              
+                'qaxbNpLnCeBT',              
+                'if0_41702370_notebook' 
+            );
             if (mysqli_connect_errno()) {
                 echo 'Ошибка: ' . mysqli_connect_error();
             }
+			mysqli_set_charset($notebook_bd, 'utf8');
             $sql = "SELECT id, surname, name FROM contacts ORDER BY surname, name";
             $result = mysqli_query($notebook_bd, $sql);
             while ($row = mysqli_fetch_assoc($result)) {

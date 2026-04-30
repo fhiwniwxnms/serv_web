@@ -131,6 +131,10 @@ a {
     background-color: var(--peach);
 }
 
+.a-grid .success {
+    grid-column: 1 / -1;
+}
+
 span {
     width: 8px;
     border: 1px solid var(--dark-chocolate);

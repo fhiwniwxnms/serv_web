@@ -51,6 +51,7 @@
         </div>
         <?php
         session_start();
+        require_once __DIR__ . '/trig.php';
         if (!isset($_SESSION['history'])) {
             $_SESSION['history'] = array();
         }
@@ -89,17 +90,27 @@
                 return (string)$sum;
             }
             if ($val[0] === '-') $val = '0' . $val;
-            $args = explode('-', $val);
-            if (count($args) > 1) {
-                $first = calculate($args[0]);
-                if (!isnum($first)) return $first;
-                $res = (float)$first;
-                for ($i = 1; $i < count($args); $i++) {
-                    $arg = calculate($args[$i]);
-                    if (!isnum($arg)) return $arg;
-                    $res -= (float)$arg;
+            $rawParts = explode('-', $val);
+            if (count($rawParts) > 1) {
+                $args = [];
+                foreach ($rawParts as $part) {
+                    if (!empty($args) && preg_match('/[+*\/]$/', $args[count($args)-1])) {
+                        $args[count($args)-1] .= '-' . $part;
+                    } else {
+                        $args[] = $part;
+                    }
                 }
-                return (string)$res;
+                if (count($args) > 1) {
+                    $first = calculate($args[0]);
+                    if (!isnum($first)) return $first;
+                    $res = (float)$first;
+                    for ($i = 1; $i < count($args); $i++) {
+                        $arg = calculate($args[$i]);
+                        if (!isnum($arg)) return $arg;
+                        $res -= (float)$arg;
+                    }
+                    return (string)$res;
+                }
             }
             $args = explode('*', $val);
             if (count($args) > 1) {
@@ -162,6 +173,19 @@
             $text = rtrim(rtrim(number_format($v, 10, '.', ''), '0'), '.');
             return $text === '' ? '0' : $text;
         }
+        function resolveTrigFunctions($expr) {
+            $pattern = '/(sin|cos|tan|cot|asin|acos|atan)\((-?[\d.]+)\)/i';
+            $prev = null;
+            while ($expr !== $prev) {
+                $prev = $expr;
+                $expr = preg_replace_callback($pattern, function($m) {
+                    $result = callTrig($m[1], (float)$m[2]);
+                    if ($result === null) return 'Ошибка';
+                    return (string)$result;
+                }, $expr);
+            }
+            return $expr;
+        }
         if (isset($_POST['exp_field'])) {
             $expr = trim((string)$_POST['exp_field']);
             $bad = '';
@@ -183,7 +207,19 @@
             header('Location: index.php?result=' . urlencode($out));
             exit;
         }
+        $fileExprPath = __DIR__ . '/../Task/expression.txt';
+        $fileExprText = file_exists($fileExprPath) ? trim(file_get_contents($fileExprPath)) : '';
+        $fileResult = '';
+        if ($fileExprText !== '') {
+            $clean = str_replace(' ', '', $fileExprText);
+            $resolved = resolveTrigFunctions($clean);
+            $fileResult = formatResult(calculateSq($resolved));
+        }
         ?>
+        <div class="trig_section">
+            <p class="trig_label">Из файла:&nbsp;<span><?php echo htmlspecialchars($fileExprText !== '' ? $fileExprText : 'Task/expression.txt не найден', ENT_QUOTES, 'UTF-8'); ?></span></p>
+            <?php if ($fileResult !== ''): ?><p class="trig_res">= <?php echo htmlspecialchars($fileResult, ENT_QUOTES, 'UTF-8'); ?></p><?php endif; ?>
+        </div>
     </main>
     <footer>
         <p>Задание для самостоятельной работы: «Calculator»</p>

@@ -290,5 +290,29 @@ a {
 footer p {
     font-size: 1.2rem;
     margin-left: 20px;
+}
 
+.trig_section {
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: var(--white-55);
+    border: 1px solid var(--dark-chocolate-20);
+    border-radius: 16px;
+    text-align: center;
+}
+
+.trig_label {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--dark-chocolate-80);
+}
+
+.trig_label span {
+    font-weight: bold;
+}
+
+.trig_res {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--dark-chocolate);
 }
