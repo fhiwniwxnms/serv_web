@@ -1,11 +1,6 @@
 <?php
     function getFriendsList ($type, $page) {
-        $notebook_bd = mysqli_connect(
-            'sql110.infinityfree.com',  
-            'if0_41702370',              
-            'qaxbNpLnCeBT',              
-            'if0_41702370_notebook' 
-        );
+        $notebook_bd = mysqli_connect('localhost', 'root', '', 'notebook');
         if (mysqli_connect_errno()) {
             echo 'Ошибка: ' . mysqli_connect_error();
         }
